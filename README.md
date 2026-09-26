@@ -7,3 +7,5 @@ Versi ini mempertahankan desain final sebelumnya dan hanya merapikan area koneks
 - Status USB-TTL dibuat serasi tinggi dan posisinya dengan selector COM/baud.
 - Clear Log dan Save Log tetap di kanan.
 - UART LOG panjang, ERROR ANALYZER, WEB SOLUTIONS, dan logo Ali Games transparan tidak diubah.
+
+UI note: Clear Log and Save Log are intentionally preserved in the connection bar.
