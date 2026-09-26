@@ -1,12 +1,23 @@
 # UART Ali Games Edition
 
-Final consistent build package.
+Windows desktop UART/USB-TTL diagnostic tool with a dark gold/cyan interface.
 
-- Ali Games gold transparent logo.
-- Auto detect / auto connect USB-TTL.
-- Compact COM selector (COMx).
-- Long UART LOG panel with Auto Scroll on the same line.
-- ERROR ANALYZER remains visible.
-- WEB SOLUTIONS with COPY WEB SOLUTION.
-- Clear Log and Save Log buttons visible in the connection bar.
-- Windows build workflow included in `.github/workflows/build-windows.yml`.
+## Tampilan & fungsi
+- Logo **Ali Games gold transparan** menggunakan artwork yang diberikan pengguna.
+- USB-TTL **Auto Detect + Auto Connect** memakai `pyserial`.
+- Indikator header dan connection box berubah hanya setelah port serial berhasil dibuka.
+- Saat USB-TTL dicabut, koneksi ditutup dan status kembali **WAITING**.
+- UART LOG panjang dengan Auto Scroll.
+- ERROR ANALYZER menampilkan error terakhir dan diagnosis lokal.
+- WEB SOLUTIONS mencari hasil web otomatis untuk error UART.
+- Tombol **COPY WEB SOLUTION**, **Clear Log**, dan **Save Log**.
+- COM selector dibuat compact agar cukup menampilkan `COM5`, `COM9`, dll.
+
+## Build lokal
+```powershell
+./build.ps1
+```
+Hasil: `dist/UART_Ali_Games_Edition.exe`
+
+## GitHub Actions
+Upload seluruh folder project ke repository GitHub, lalu jalankan workflow **Build UART Ali Games Edition**.
