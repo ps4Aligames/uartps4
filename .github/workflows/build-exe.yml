@@ -14,9 +14,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build EXE
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name BW&E_UART_Reader_v2 src/bwe_uart_reader.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name 'BW&E_UART_Reader_v2' src/bwe_uart_reader.py
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
           name: BW&E_UART_Reader_v2
-          path: dist/BW&E_UART_Reader_v2.exe
+          path: 'dist/BW&E_UART_Reader_v2.exe'
