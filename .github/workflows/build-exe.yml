@@ -15,10 +15,10 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --upgrade pip pyinstaller pyserial Pillow requests
-      - name: Build EXE with AliGamer gold icon
+      - name: Build EXE with Ali Games gold icon
         shell: pwsh
         run: |
-          pyinstaller --noconfirm --clean --onefile --windowed --name 'UART_Ali_Games_Edition' --icon 'assets/AliGamer.ico' --add-data 'assets;assets' src/uart_ali_games.py
+          pyinstaller --noconfirm --clean --onefile --windowed --name 'UART_Ali_Games_Edition' --icon 'assets/AliGames.ico' --add-data 'assets;assets' src/uart_ali_games.py
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
