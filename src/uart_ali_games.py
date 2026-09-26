@@ -34,16 +34,19 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.title(APP_TITLE)
-        self.root.geometry('1420x900')
-        self.root.minsize(1120, 720)
+        self.root.geometry('1240x780')
+        self.root.minsize(1050, 680)
         self.root.configure(bg=BG)
-        try: self.root.iconbitmap(asset_path('AliGamer.ico'))
+        try: self.root.iconbitmap(asset_path('AliGames.ico'))
         except Exception: pass
         self.root.protocol('WM_DELETE_WINDOW', self.on_close)
         self.ser = None; self.running = False; self.current_port = None
+        self.connection_token = 0
+        self.last_port_names = set()
         self.known_ports = set(); self.q = queue.Queue(); self.search_rows = []
         self.logo_img = None; self.cards = []
         self.build_styles(); self.build_ui()
+        self.set_disconnected_state('Menunggu perangkat USB-TTL...')
         self.refresh_ports(auto=True)
         self.root.after(100, self.drain_queue)
         self.root.after(1000, self.auto_monitor_ports)
@@ -64,30 +67,30 @@ class App:
         self.build_header()
         self.build_connection()
         body = tk.Frame(self.root, bg=BG)
-        body.pack(fill='both', expand=True, padx=16, pady=(0, 14))
-        body.grid_columnconfigure(0, weight=3); body.grid_columnconfigure(1, weight=2)
-        body.grid_rowconfigure(0, weight=3); body.grid_rowconfigure(1, weight=2)
+        body.pack(fill='both', expand=True, padx=12, pady=(0, 10))
+        body.grid_columnconfigure(0, weight=3, uniform='cols'); body.grid_columnconfigure(1, weight=2, uniform='cols')
+        body.grid_rowconfigure(0, weight=5); body.grid_rowconfigure(1, weight=3); body.grid_rowconfigure(2, weight=0)
         self.build_uart_log(body, 0, 0)
-        self.build_web(body, 0, 1)
+        self.build_web(body, 0, 1, rowspan=2)
         self.build_analyzer(body, 1, 0)
-        self.build_footer(body, 1, 1)
+        self.build_footer(body, 2, 0, colspan=2)
 
     def build_header(self):
-        h = tk.Frame(self.root, bg=HEADER, height=116, highlightthickness=1, highlightbackground='#1b2b3a')
+        h = tk.Frame(self.root, bg=HEADER, height=100, highlightthickness=1, highlightbackground='#1b2b3a')
         h.pack(fill='x'); h.pack_propagate(False)
         # gold accent line
         tk.Frame(h, bg=GOLD, height=2).place(relx=0, rely=1, relwidth=1, anchor='sw')
         if Image and ImageTk:
             try:
-                im = Image.open(asset_path('AliGamer_logo_gold.png')).convert('RGBA')
-                im.thumbnail((310, 92), Image.Resampling.LANCZOS)
+                im = Image.open(asset_path('AliGames_logo_gold.png')).convert('RGBA')
+                im.thumbnail((270, 78), Image.Resampling.LANCZOS)
                 self.logo_img = ImageTk.PhotoImage(im)
                 tk.Label(h, image=self.logo_img, bg=HEADER).pack(side='left', padx=(26, 16), pady=10)
             except Exception:
                 pass
         title = tk.Frame(h, bg=HEADER); title.pack(side='left', fill='y', pady=19)
-        tk.Label(title, text='UART ', bg=HEADER, fg=TEXT, font=('Segoe UI', 25, 'bold')).pack(side='left')
-        tk.Label(title, text='Ali Games Edition', bg=HEADER, fg=GOLD2, font=('Segoe UI', 25, 'bold')).pack(side='left')
+        tk.Label(title, text='UART ', bg=HEADER, fg=TEXT, font=('Segoe UI', 22, 'bold')).pack(side='left')
+        tk.Label(title, text='Ali Games Edition', bg=HEADER, fg=GOLD2, font=('Segoe UI', 22, 'bold')).pack(side='left')
         tk.Label(title, text='AUTO DETECT   •   AUTO CONNECT   •   ERROR ANALYZER   •   WEB SOLUTIONS', bg=HEADER, fg=MUTED, font=('Segoe UI', 9, 'bold')).pack(anchor='w', pady=(3,0))
         right = tk.Frame(h, bg=HEADER); right.pack(side='right', padx=28, pady=23)
         tk.Label(right, text='USB-TTL', bg=HEADER, fg=TEXT, font=('Segoe UI', 10, 'bold')).pack(anchor='e')
@@ -107,8 +110,8 @@ class App:
         return bar
 
     def build_connection(self):
-        c = tk.Frame(self.root, bg=PANEL, height=92, highlightthickness=1, highlightbackground=BORDER)
-        c.pack(fill='x', padx=16, pady=(12, 10)); c.pack_propagate(False)
+        c = tk.Frame(self.root, bg=PANEL, height=78, highlightthickness=1, highlightbackground=BORDER)
+        c.pack(fill='x', padx=12, pady=(10, 8)); c.pack_propagate(False)
         left = tk.Frame(c, bg=PANEL); left.pack(side='left', fill='y', padx=16, pady=12)
         tk.Label(left, text='COM PORT  (AUTO DETECT)', bg=PANEL, fg=MUTED, font=('Segoe UI', 8, 'bold')).pack(anchor='w')
         row = tk.Frame(left, bg=PANEL); row.pack(pady=(5,0))
@@ -118,11 +121,11 @@ class App:
         tk.Label(mid, text='BAUD RATE', bg=PANEL, fg=MUTED, font=('Segoe UI', 8, 'bold')).pack(anchor='w')
         self.baud = ttk.Combobox(mid, width=14, values=['9600','19200','38400','57600','115200','230400','460800','921600'], state='readonly')
         self.baud.set('115200'); self.baud.pack(pady=(5,0))
-        self.conn_box = tk.Frame(c, bg='#071a14', highlightthickness=1, highlightbackground='#0d7553', width=270, height=62); self.conn_box.pack(side='left', padx=16, pady=14); self.conn_box.pack_propagate(False)
-        self.conn_dot = tk.Label(self.conn_box, text='●', bg='#071a14', fg=GREEN, font=('Segoe UI', 18)); self.conn_dot.pack(side='left', padx=(16,5))
-        tx = tk.Frame(self.conn_box, bg='#071a14'); tx.pack(side='left', pady=9)
-        tk.Label(tx, text='USB-TTL Terdeteksi', bg='#071a14', fg=GREEN, font=('Segoe UI', 10, 'bold')).pack(anchor='w')
-        self.conn_detail = tk.Label(tx, text='Menunggu perangkat...', bg='#071a14', fg=TEXT, font=('Segoe UI', 9)); self.conn_detail.pack(anchor='w')
+        self.conn_box = tk.Frame(c, bg='#15100a', highlightthickness=1, highlightbackground='#6f5819', width=270, height=62); self.conn_box.pack(side='left', padx=16, pady=14); self.conn_box.pack_propagate(False)
+        self.conn_dot = tk.Label(self.conn_box, text='●', bg='#15100a', fg=YELLOW, font=('Segoe UI', 18)); self.conn_dot.pack(side='left', padx=(16,5))
+        tx = tk.Frame(self.conn_box, bg='#15100a'); tx.pack(side='left', pady=9)
+        self.conn_title = tk.Label(tx, text='USB-TTL Menunggu', bg='#15100a', fg=YELLOW, font=('Segoe UI', 10, 'bold')); self.conn_title.pack(anchor='w')
+        self.conn_detail = tk.Label(tx, text='Colokkan perangkat...', bg='#15100a', fg=TEXT, font=('Segoe UI', 9)); self.conn_detail.pack(anchor='w')
         btns = tk.Frame(c, bg=PANEL); btns.pack(side='right', padx=16, pady=17)
         ttk.Button(btns, text='▣  Clear Log', style='Dark.TButton', command=self.clear_log).pack(side='left', padx=5)
         ttk.Button(btns, text='▣  Save Log', style='Gold.TButton', command=self.save_log).pack(side='left', padx=5)
@@ -138,8 +141,8 @@ class App:
         sy=ttk.Scrollbar(wrap,orient='vertical',command=self.log.yview); self.log.configure(yscrollcommand=sy.set)
         self.log.pack(side='left',fill='both',expand=True); sy.pack(side='right',fill='y')
 
-    def build_web(self,parent,r,c):
-        f=self.card(parent,r,c); self.heading(f,'◉  WEB SOLUTIONS',GOLD2)
+    def build_web(self,parent,r,c,rowspan=1):
+        f=self.card(parent,r,c,rowspan=rowspan); self.heading(f,'◉  WEB SOLUTIONS',GOLD2)
         self.web_status=tk.Label(f,text='Menunggu error...',bg=PANEL,fg=MUTED,font=('Segoe UI',8,'bold')); self.web_status.pack(anchor='e',padx=14,pady=(0,7))
         self.web_canvas=tk.Canvas(f,bg=PANEL,highlightthickness=0); sb=ttk.Scrollbar(f,orient='vertical',command=self.web_canvas.yview); self.web_canvas.configure(yscrollcommand=sb.set)
         self.web_inner=tk.Frame(self.web_canvas,bg=PANEL); self.web_canvas.create_window((0,0),window=self.web_inner,anchor='nw')
@@ -164,62 +167,123 @@ class App:
         tk.Label(self.diag,text='💡  Diagnosis & Solusi',bg=PANEL2,fg=GOLD2,font=('Segoe UI',12,'bold')).pack(anchor='w',padx=14,pady=(13,5))
         self.diag_text=tk.Label(self.diag,text='Pencarian solusi web akan berjalan otomatis saat error UART terdeteksi.',bg=PANEL2,fg=TEXT,font=('Segoe UI',10),justify='left',wraplength=460); self.diag_text.pack(anchor='w',padx=14,pady=(0,13))
 
-    def build_footer(self,parent,r,c):
-        f=self.card(parent,r,c); self.heading(f,'●  SYSTEM STATUS',GREEN)
+    def build_footer(self,parent,r,c,colspan=1):
+        f=self.card(parent,r,c,colspan=colspan); self.heading(f,'●  SYSTEM STATUS',GREEN)
         self.footer_msg=tk.Label(f,text='USB-TTL belum terhubung. Colokkan perangkat untuk auto-connect.',bg=PANEL,fg=MUTED,font=('Segoe UI',10),wraplength=400,justify='left'); self.footer_msg.pack(anchor='w',padx=16,pady=16)
         tk.Label(f,text='Web search: automatic   |   Action: COPY WEB SOLUTION',bg=PANEL,fg=GOLD2,font=('Segoe UI',9,'bold')).pack(anchor='w',padx=16)
+
+    def _port_is_usb_serial(self, p):
+        text = ' '.join(str(x or '') for x in (p.description, p.manufacturer, p.product, p.hwid)).lower()
+        keys = ('usb', 'ttl', 'serial', 'ch340', 'ch341', 'cp210', 'ftdi', 'silicon labs', 'prolific')
+        return any(k in text for k in keys)
 
     def refresh_ports(self,auto=False):
         ports=[] if list_ports is None else list(list_ports.comports())
         vals=[f'{p.device} - {p.description or "USB-SERIAL"}' for p in ports]
         self.port['values']=vals
+        if self.current_port and any(p.device == self.current_port for p in ports):
+            idx=next(i for i,p in enumerate(ports) if p.device == self.current_port)
+            self.port.current(idx)
+        elif vals and not self.port.get():
+            self.port.current(0)
         if auto and ports and not self.running:
-            p=ports[0].device; self.port.set(vals[0]); self.connect(p)
-        elif vals and not self.port.get(): self.port.current(0)
+            candidates=[p for p in ports if self._port_is_usb_serial(p)] or ports
+            chosen=candidates[0]
+            self.port.set(next(v for v in vals if v.startswith(chosen.device + ' ')))
+            self.connect(chosen.device)
 
     def auto_monitor_ports(self):
         try:
-            ports=[] if list_ports is None else list(list_ports.comports()); names={p.device for p in ports}
+            ports=[] if list_ports is None else list(list_ports.comports())
+            names={p.device for p in ports}
+            added=names - self.last_port_names
+            removed=self.last_port_names - names
+            self.last_port_names=names
+            vals=[f'{p.device} - {p.description or "USB-SERIAL"}' for p in ports]
+            self.port['values']=vals
             if self.running and self.current_port and self.current_port not in names:
-                self.append_log(f'WARNING USB-TTL disconnected: {self.current_port}'); self.disconnect()
-            self.port['values']=[f'{p.device} - {p.description or "USB-SERIAL"}' for p in ports]
-            if not self.running and ports:
-                self.port.set(self.port['values'][0]); self.connect(ports[0].device)
-        except Exception: pass
-        self.root.after(1000,self.auto_monitor_ports)
+                old=self.current_port
+                self.append_log(f'WARNING USB-TTL disconnected: {old}')
+                self.disconnect(log=False)
+            if not self.running and ports and (added or not self.current_port):
+                candidates=[p for p in ports if p.device in added and self._port_is_usb_serial(p)]
+                if not candidates: candidates=[p for p in ports if p.device in added] or [p for p in ports if self._port_is_usb_serial(p)] or ports
+                chosen=candidates[0]
+                for i,p in enumerate(ports):
+                    if p.device == chosen.device: self.port.current(i); break
+                self.connect(chosen.device)
+        except Exception:
+            pass
+        self.root.after(700,self.auto_monitor_ports)
 
     def connect(self,p):
         if serial is None:
-            self.set_status('●  pyserial belum terpasang',RED,''); return
+            self.set_status('●  PYTHON SERIAL ERROR',RED,'pyserial tidak tersedia')
+            self.set_connected_box(False, 'pyserial belum terpasang')
+            return
+        if self.running and self.current_port == p:
+            return
+        if self.running:
+            self.disconnect(log=False)
+        token=self.connection_token+1
+        self.connection_token=token
         try:
-            self.ser=serial.Serial(p,int(self.baud.get()),timeout=0.25)
-            self.running=True; self.current_port=p
-            self.set_status('●  CONNECTED',GREEN,f'{p}  |  {self.baud.get()} bps')
-            self.conn_detail.config(text=f'{p} - Connected'); self.footer_msg.config(text=f'USB-TTL terdeteksi di {p}. Auto-connect berhasil.')
+            baud=int(self.baud.get())
+            ser=serial.Serial(p,baud,timeout=0.25)
+            self.ser=ser; self.running=True; self.current_port=p
+            self.set_status('●  CONNECTED',GREEN,f'{p}  |  {baud} bps')
+            self.set_connected_box(True, f'{p} - Connected')
+            self.footer_msg.config(text=f'USB-TTL terdeteksi di {p}. Auto-connect berhasil.')
             self.append_log(f'INFO USB-TTL terdeteksi di {p}')
-            self.append_log(f'INFO Baud rate: {self.baud.get()}')
-            threading.Thread(target=self.reader,daemon=True).start()
+            self.append_log(f'INFO Baud rate: {baud}')
+            threading.Thread(target=self.reader,args=(ser,token),daemon=True).start()
         except Exception as e:
-            self.set_status('●  CONNECTION ERROR',RED,f'{p}'); self.conn_detail.config(text='Gagal membuka COM'); self.append_log('ERROR '+str(e))
+            self.running=False; self.ser=None; self.current_port=None
+            self.set_status('●  DETECTED / OPEN FAILED',RED,f'{p}')
+            self.set_connected_box(False, f'{p} - gagal dibuka')
+            self.footer_msg.config(text=f'USB-TTL terdeteksi di {p}, tetapi COM gagal dibuka.')
+            self.append_log('ERROR COM open failed: '+str(e))
 
-    def disconnect(self):
+    def set_connected_box(self, connected, detail):
+        if connected:
+            bg='#071a14'; border='#0d7553'; fg=GREEN; title='USB-TTL Terdeteksi'
+        else:
+            bg='#15100a'; border='#6f5819'; fg=YELLOW; title='USB-TTL Menunggu'
+        self.conn_box.config(bg=bg,highlightbackground=border)
+        self.conn_dot.config(bg=bg,fg=fg)
+        self.conn_title.config(bg=bg,fg=fg,text=title)
+        self.conn_detail.config(bg=bg,text=detail)
+
+    def set_disconnected_state(self, detail='Menunggu perangkat...'):
+        self.set_status('●  WAITING FOR USB-TTL',YELLOW,'COM —  |  115200 bps')
+        self.set_connected_box(False, detail)
+        if hasattr(self,'footer_msg'):
+            self.footer_msg.config(text='USB-TTL belum terhubung. Colokkan perangkat untuk auto-connect.')
+
+    def disconnect(self, log=True):
+        self.connection_token += 1
         self.running=False
+        old=self.current_port
         try:
             if self.ser: self.ser.close()
         except Exception: pass
         self.ser=None; self.current_port=None
-        self.set_status('●  WAITING FOR USB-TTL',YELLOW,'COM —  |  115200 bps'); self.conn_detail.config(text='Menunggu perangkat...')
+        self.set_disconnected_state()
+        if log and old:
+            self.append_log(f'WARNING USB-TTL disconnected: {old}')
 
     def set_status(self,text,color,detail):
         self.status.config(text=text,fg=color); self.status_detail.config(text=detail)
 
-    def reader(self):
-        while self.running and self.ser:
+    def reader(self, ser, token):
+        while self.running and self.ser is ser and self.connection_token == token:
             try:
-                data=self.ser.readline()
+                data=ser.readline()
                 if data: self.q.put(data.decode('utf-8','replace').rstrip('\r\n'))
             except Exception as e:
-                self.q.put('ERROR '+str(e)); break
+                if self.connection_token == token:
+                    self.q.put('ERROR UART read: '+str(e))
+                break
 
     def drain_queue(self):
         while not self.q.empty(): self.append_log(self.q.get())
