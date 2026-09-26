@@ -1,39 +1,9 @@
-# UART Ali Games Edition
+# UART Ali Games Edition — FINAL LOG MAX / CONNECTION ALIGNED
 
-Versi final **AUTO USB-TTL** untuk Windows.
+Versi ini mempertahankan desain final sebelumnya dan hanya merapikan area koneksi atas:
 
-## Fitur
-- UI dark professional compact 1080×650 (UART LOG dibuat lebih tinggi; ERROR ANALYZER dibuat ringkas agar tetap terlihat) dengan logo Ali Games gold.
-- **AUTO DETECT** USB-TTL/COM.
-- **AUTO CONNECT** saat USB-TTL terpasang.
-- Indikator koneksi benar-benar mengikuti kondisi port:
-  - 🟡 `USB-TTL Menunggu` = belum terhubung.
-  - 🟢 `USB-TTL Terdeteksi` / `CONNECTED` = COM berhasil dibuka.
-  - 🔴 `DETECTED / OPEN FAILED` = perangkat terlihat tetapi COM gagal dibuka.
-  - Saat USB-TTL dicabut, status kembali otomatis ke waiting dan COM ditutup.
-- Default baud `115200`, dengan pilihan baud umum.
-- UART log dengan warna INFO/WARNING/ERROR.
-- Error UART memicu **ERROR ANALYZER** dan pencarian web otomatis.
-- Hasil pencarian web tampil di dalam aplikasi.
-- Tombol web hanya **COPY WEB SOLUTION**.
-- `Clear Log` dan `Save Log`.
-- Icon EXE menggunakan emblem Ali Games gold dalam ICO multi-resolusi 16–256 px.
-
-## Build di GitHub
-1. Upload seluruh isi folder ini ke repository GitHub.
-2. Buka **Actions**.
-3. Pilih **Build UART Ali Games Edition**.
-4. Jalankan workflow dengan **Run workflow** atau push ke `main`/`master`.
-5. Download artifact `UART-Ali-Games-Edition`.
-
-## Build lokal Windows PowerShell
-```powershell
-python -m pip install -r requirements.txt
-pyinstaller --noconfirm --clean --onefile --windowed --name 'UART_Ali_Games_Edition' --icon 'assets/AliGames.ico' --add-data 'assets;assets' src/uart_ali_games.py
-```
-
-EXE hasil build:
-`dist\UART_Ali_Games_Edition.exe`
-
-## Logo
-Logo header menggunakan **gambar transparan Ali Games gold yang baru** dari referensi terakhir pengguna. Tulisan `service` sudah dihapus. Asset ini dipakai apa adanya untuk logo header; icon EXE memakai emblem dari asset yang sama agar tetap terbaca pada ukuran kecil. Tidak menggunakan logo AliGamer.
+- COM PORT (AUTO DETECT) tetap compact, hanya menampilkan COMx seperti COM9.
+- BAUD RATE sejajar dengan COM.
+- Status USB-TTL dibuat serasi tinggi dan posisinya dengan selector COM/baud.
+- Clear Log dan Save Log tetap di kanan.
+- UART LOG panjang, ERROR ANALYZER, WEB SOLUTIONS, dan logo Ali Games transparan tidak diubah.
