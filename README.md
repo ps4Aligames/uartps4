@@ -1,23 +1,15 @@
-# UART Ali Games Edition
+# UART Ali Games Edition — FINAL COMPACT WAITING FIX
 
-Windows desktop UART/USB-TTL diagnostic tool with a dark gold/cyan interface.
+Versi final UI/USB-TTL dengan perubahan terakhir:
+- Ukuran default window: 1040x640 (minimum 900x560).
+- UART LOG tetap panjang dan `UART LOG` + `Auto Scroll` sejajar.
+- Area COM Port tetap compact.
+- `Clear Log` dan `Save Log` tetap tersedia.
+- ERROR ANALYZER tetap tampil.
+- WEB SOLUTIONS + `COPY WEB SOLUTION` tetap.
+- Logo memakai `AliGames_logo_gold.png` transparan yang telah disetujui.
+- Status USB-TTL: hijau hanya setelah serial berhasil dibuka; saat menunggu, box memakai warna dark-navy yang konsisten dengan tema, dengan indikator kuning.
+- Auto-detect/auto-connect dan disconnect monitor tetap aktif.
 
-## Tampilan & fungsi
-- Logo **Ali Games gold transparan** menggunakan artwork yang diberikan pengguna.
-- USB-TTL **Auto Detect + Auto Connect** memakai `pyserial`.
-- Indikator header dan connection box berubah hanya setelah port serial berhasil dibuka.
-- Saat USB-TTL dicabut, koneksi ditutup dan status kembali **WAITING**.
-- UART LOG panjang dengan Auto Scroll.
-- ERROR ANALYZER menampilkan error terakhir dan diagnosis lokal.
-- WEB SOLUTIONS mencari hasil web otomatis untuk error UART.
-- Tombol **COPY WEB SOLUTION**, **Clear Log**, dan **Save Log**.
-- COM selector dibuat compact agar cukup menampilkan `COM5`, `COM9`, dll.
-
-## Build lokal
-```powershell
-./build.ps1
-```
-Hasil: `dist/UART_Ali_Games_Edition.exe`
-
-## GitHub Actions
-Upload seluruh folder project ke repository GitHub, lalu jalankan workflow **Build UART Ali Games Edition**.
+Build:
+`powershell -ExecutionPolicy Bypass -File build.ps1`

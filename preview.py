@@ -32,5 +32,9 @@ app.show_results(rows)
 
 def cap():
     root.update(); x=root.winfo_rootx(); y=root.winfo_rooty(); w=root.winfo_width(); h=root.winfo_height()
-    ImageGrab.grab(bbox=(x,y,x+w,y+h)).save(Path(__file__).parent/'preview_final.png'); root.destroy()
+    base=Path(__file__).parent
+    ImageGrab.grab(bbox=(x,y,x+w,y+h)).save(base/'preview_final.png')
+    app.set_disconnected_state('Menunggu perangkat USB-TTL...')
+    root.update(); ImageGrab.grab(bbox=(x,y,x+w,y+h)).save(base/'preview_waiting.png')
+    root.destroy()
 root.after(1000,cap); root.mainloop()
