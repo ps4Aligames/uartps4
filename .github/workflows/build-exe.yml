@@ -1,0 +1,22 @@
+name: Build BW&E UART Reader v2
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build EXE
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name BW&E_UART_Reader_v2 src/bwe_uart_reader.py
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: BW&E_UART_Reader_v2
+          path: dist/BW&E_UART_Reader_v2.exe
