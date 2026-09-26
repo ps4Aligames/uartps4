@@ -1,15 +1,29 @@
-# UART Ali Games Edition — FINAL COMPACT WAITING FIX
+# UART Ali Games Edition — FINAL COMPACT STATUS + BUTTON FIX
 
-Versi final UI/USB-TTL dengan perubahan terakhir:
-- Ukuran default window: 1040x640 (minimum 900x560).
-- UART LOG tetap panjang dan `UART LOG` + `Auto Scroll` sejajar.
-- Area COM Port tetap compact.
-- `Clear Log` dan `Save Log` tetap tersedia.
-- ERROR ANALYZER tetap tampil.
+Versi final dengan UI compact dan status koneksi USB-TTL yang terlihat jelas.
+
+## Perubahan terakhir
+- Ukuran default window: **1040x660**.
+- Ukuran minimum: **900x580**.
+- **Clear Log** dan **Save Log** memakai tombol fixed-size agar tulisan tidak terpotong.
+- Header status **USB-TTL / CONNECTED / COMx / baud** tetap terlihat pada ukuran compact.
+- Box koneksi menampilkan **USB-TTL Terdeteksi** saat Serial berhasil dibuka.
+- Saat tidak ada perangkat, box menampilkan **USB-TTL Menunggu** dengan warna dark-navy + indikator kuning.
+- Saat USB-TTL dicabut, aplikasi mendeteksi perubahan port dan kembali ke WAITING.
+- UART LOG tetap menjadi area utama dan `UART LOG` + `Auto Scroll` sejajar.
+- COM Port tetap compact, misalnya `COM9`.
+- ERROR ANALYZER tetap menampilkan **Error Detected** dan **Diagnosis & Solusi**.
 - WEB SOLUTIONS + `COPY WEB SOLUTION` tetap.
-- Logo memakai `AliGames_logo_gold.png` transparan yang telah disetujui.
-- Status USB-TTL: hijau hanya setelah serial berhasil dibuka; saat menunggu, box memakai warna dark-navy yang konsisten dengan tema, dengan indikator kuning.
-- Auto-detect/auto-connect dan disconnect monitor tetap aktif.
+- Logo memakai **AliGames_logo_gold.png** transparan yang disetujui.
+- Icon EXE memakai **AliGames.ico** multi-resolution.
 
-Build:
-`powershell -ExecutionPolicy Bypass -File build.ps1`
+## Build GitHub Actions
+Workflow: `.github/workflows/build-windows.yml`
+
+## Build lokal
+```powershell
+powershell -ExecutionPolicy Bypass -File build.ps1
+```
+
+Output:
+`dist\UART_Ali_Games_Edition.exe`
