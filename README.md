@@ -3,7 +3,7 @@
 Versi final **AUTO USB-TTL** untuk Windows.
 
 ## Fitur
-- UI dark professional 1240×780 dengan logo Ali Games gold.
+- UI dark professional compact 1080×650 (UART LOG dibuat lebih tinggi; ERROR ANALYZER dibuat ringkas agar tetap terlihat) dengan logo Ali Games gold.
 - **AUTO DETECT** USB-TTL/COM.
 - **AUTO CONNECT** saat USB-TTL terpasang.
 - Indikator koneksi benar-benar mengikuti kondisi port:
@@ -17,7 +17,7 @@ Versi final **AUTO USB-TTL** untuk Windows.
 - Hasil pencarian web tampil di dalam aplikasi.
 - Tombol web hanya **COPY WEB SOLUTION**.
 - `Clear Log` dan `Save Log`.
-- Icon EXE menggunakan logo Ali Games gold.
+- Icon EXE menggunakan emblem Ali Games gold dalam ICO multi-resolusi 16–256 px.
 
 ## Build di GitHub
 1. Upload seluruh isi folder ini ke repository GitHub.
@@ -36,4 +36,4 @@ EXE hasil build:
 `dist\UART_Ali_Games_Edition.exe`
 
 ## Logo
-Logo header dan icon EXE menggunakan logo **Ali Games** dari referensi pengguna, dengan tulisan **service** dihapus dan warna dibuat gold transparan. Tidak menggunakan logo AliGamer.
+Logo header menggunakan **gambar transparan Ali Games gold yang baru** dari referensi terakhir pengguna. Tulisan `service` sudah dihapus. Asset ini dipakai apa adanya untuk logo header; icon EXE memakai emblem dari asset yang sama agar tetap terbaca pada ukuran kecil. Tidak menggunakan logo AliGamer.
