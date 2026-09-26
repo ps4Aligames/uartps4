@@ -34,3 +34,6 @@ pyinstaller --noconfirm --clean --onefile --windowed --name 'UART_Ali_Games_Edit
 
 EXE hasil build:
 `dist\UART_Ali_Games_Edition.exe`
+
+## Logo
+Logo header dan icon EXE menggunakan logo **Ali Games** dari referensi pengguna, dengan tulisan **service** dihapus dan warna dibuat gold transparan. Tidak menggunakan logo AliGamer.
