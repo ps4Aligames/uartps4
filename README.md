@@ -1,11 +1,12 @@
-# UART Ali Games Edition — FINAL LOG MAX / CONNECTION ALIGNED
+# UART Ali Games Edition
 
-Versi ini mempertahankan desain final sebelumnya dan hanya merapikan area koneksi atas:
+Final consistent build package.
 
-- COM PORT (AUTO DETECT) tetap compact, hanya menampilkan COMx seperti COM9.
-- BAUD RATE sejajar dengan COM.
-- Status USB-TTL dibuat serasi tinggi dan posisinya dengan selector COM/baud.
-- Clear Log dan Save Log tetap di kanan.
-- UART LOG panjang, ERROR ANALYZER, WEB SOLUTIONS, dan logo Ali Games transparan tidak diubah.
-
-UI note: Clear Log and Save Log are intentionally preserved in the connection bar.
+- Ali Games gold transparent logo.
+- Auto detect / auto connect USB-TTL.
+- Compact COM selector (COMx).
+- Long UART LOG panel with Auto Scroll on the same line.
+- ERROR ANALYZER remains visible.
+- WEB SOLUTIONS with COPY WEB SOLUTION.
+- Clear Log and Save Log buttons visible in the connection bar.
+- Windows build workflow included in `.github/workflows/build-windows.yml`.
