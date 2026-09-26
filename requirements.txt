@@ -1,2 +1,4 @@
 pyserial>=3.5
-pyinstaller>=6.16
+Pillow>=10.0
+requests>=2.31
+pyinstaller>=6.0
